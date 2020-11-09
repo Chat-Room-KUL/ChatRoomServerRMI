@@ -14,27 +14,46 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerInt{
 
         System.out.println(a.getName() + "  got connected....");
 
-        a.tell("You have Connected successfully.");
+        a.tell("GroupChat","You have Connected successfully.", a.getName());
 
-        publish(a.getName()+ " has just connected.");
+        publish("GroupChat",a.getName()+ " has just connected.", a.getName());
 
         v.add(a);
 
         return true;
     }
 
-    public void publish(String s) throws RemoteException{
-        System.out.println(s);
-        for(int i = 0; i < v.size() ; i++){
-            try{
-                ChatClientInt tmp = (ChatClientInt) v.get(i);
-                tmp.tell(s);
-            }catch(Exception e){
-                //problem with the client not connected.
-                //Better to remove it
+    public void publish(String receiver, String s, String sender) throws RemoteException{
+        if (receiver.equals("GroupChat")) {
+            System.out.println("We sturen naar iedereen");
+            for(int i = 0; i < v.size() ; i++){
+                try{
+                    ChatClientInt tmp = (ChatClientInt) v.get(i);
+                    tmp.tell("GroupChat", s, sender);
+                }catch(Exception e){
+                    //problem with the client not connected.
+                    //Better to remove it
+                }
             }
         }
+        else {
+            System.out.println("Prive bericht");
+            boolean found1 = false;
+
+            int i = 0;
+            while (!found1) {
+                ChatClientInt tmp = (ChatClientInt) v.get(i);
+                if (tmp.getName().equals(receiver)) {
+                    found1 = true;
+                    tmp.tell(sender, s, sender);
+                    System.out.println(sender);
+                }
+                i++;
+            }
+
+        }
     }
+
 
     public Vector getConnected() throws RemoteException{
         return v;
@@ -45,7 +64,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerInt{
             ChatClientInt tmp = (ChatClientInt) v.get(i);
             if (tmp.getName().equals(name)) {
                 v.remove(i);
-                publish(name + " has just disconnected.");
+                publish("GroupChat", name + " has just disconnected.", name);
             }
         }
     }
