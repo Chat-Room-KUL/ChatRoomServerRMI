@@ -14,7 +14,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerInt{
 
         System.out.println(a.getName() + "  got connected....");
 
-        a.tell("GroupChat","You have Connected successfully.", a.getName());
+        a.tell("GroupChat","\nYou have Connected successfully.", a.getName());
 
         publish("GroupChat",a.getName()+ " has just connected.", a.getName());
 
@@ -65,6 +65,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerInt{
             if (tmp.getName().equals(name)) {
                 v.remove(i);
                 publish("GroupChat", name + " has just disconnected.", name);
+                System.out.println(name + "  got disconnected....");
             }
         }
     }
