@@ -12,7 +12,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerInt{
 
     public boolean login(ChatClientInt a) throws IOException {
 
-        System.out.println(a.getName() + "  got connected....");
+        System.out.println(a.getName() + " got connected....");
 
         a.tell("GroupChat","\nYou have Connected successfully.", a.getName());
 
@@ -65,12 +65,12 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerInt{
             if (tmp.getName().equals(name)) {
                 v.remove(i);
                 publish("GroupChat", name + " has just disconnected.", name);
-                System.out.println(name + "  got disconnected....");
+                System.out.println(name + " got disconnected....");
             }
         }
     }
 
-    public boolean checkIfNameExists(String answer) throws RemoteException {
+    public synchronized boolean checkIfNameExists(String answer) throws RemoteException {
         for (int i = 0; i < v.size(); i++) {
             ChatClientInt tmp = (ChatClientInt) v.get(i);
             if (tmp.getName().equals(answer)) {
